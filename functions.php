@@ -52,9 +52,6 @@ require_once("../../../config.php");
 	}
 	
 	
-	
-	
-	
 	function signup($user, $pass, $first_name, $last_name){
 		
 		//hash the password
@@ -96,6 +93,79 @@ require_once("../../../config.php");
 		
 	}
 	
+	
+	function createInterestDropdown(){
+		
+		//query all interests
+		
+		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_shikter");
+		
+		$stmt = $mysql->prepare("SELECT id, name FROM interests ORDER BY name ASC");
+		
+		echo $mysql->error;
+		
+		$stmt->bind_result($id, $name);
+		$stmt->execute();
+		
+		//--------------------------------------------------------------
+		//dropdown html
+		$html = "<select name='user_interest'>";
+		
+			//for each interest
+			while($stmt->fetch()){
+				$html .= "<option value='".$id."'>".$name."</option>";
+			}
+		
+		$html .= "</select>";
+		
+		echo $html;
+		//--------------------------------------------------------------
+		
+		
+	}
+	
+	
+	function saveUserInterest($interest_id){
+		
+		//-------------------------------------------------------------------------------------------------------
+		
+		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_shikter");
+		
+		//if user already has the interest
+		$stmt = $mysql->prepare("SELECT id FROM users_interests WHERE user_id = ? and interests_id = ?");
+		echo $mysql->error;
+		$stmt->bind_param("ii", $_SESSION["user_id"], $interest_id);
+		$stmt->execute();
+		
+		if($stmt->fetch()){
+			//it existed
+			echo "You already have this interest";
+			return; //stop it there
+			}
+		$stmt->close();
+		
+		//-------------------------------------------------------------------------------------------------------
+		
+		
+		$stmt = $mysql->prepare("INSERT INTO users_interests (user_id, interests_id) VALUES (?, ?)");
+		
+		echo $mysql->error;
+		
+		$stmt->bind_param("ii", $_SESSION["user_id"], $interest_id);
+		
+		if($stmt->execute()){
+			echo "save successfully";
+		}else{
+			echo $stmt->error;
+		}
+	}
+	
+	
+	function createUserInterestList(){
+		
+		
+		
+	}
 	
 	/*
 	$name = "Vadim";

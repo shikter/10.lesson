@@ -73,3 +73,7 @@ require_once("functions.php");
 	<input type="submit" name="select_interest" value="Select">
 	
 	</form>
+	
+	<h1>Interests</h1>
+	
+	<?php createUserInterestList(); ?>

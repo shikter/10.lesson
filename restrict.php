@@ -23,12 +23,31 @@ require_once("functions.php");
 		header("Location: login.php");
 	}
 
-
-
+	
+	//someone clicked the button "add"
+	if(isset($_POST["add_new_interest"])){
+		
+		if(!empty($_POST["new_interest"])){
+			
+			saveInterest($_POST["new_interest"]);
+			
+		}else{
+			echo "You left the interest field empty";
+		}
+	}
 
 ?>
-<h2> Welcome! <?=$_SESSION["username"];?> (ID: <?=$_SESSION["user_id"];?>) </h2>
+<h2> Welcome! <?=$_SESSION["First_Name"];?> <?=$_SESSION["Last_Name"];?> (ID: <?=$_SESSION["user_id"];?>) </h2>
 
 
 <br>
 <a href="?logout=1" >Log Out</a>
+
+
+	<h2>Add interest</h2>
+	<form method="POST">
+	
+		<input type="text" name="new_interest">
+		<input type="submit" name="add_new_interest" value="Add">
+	
+	</form>

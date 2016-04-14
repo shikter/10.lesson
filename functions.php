@@ -17,13 +17,13 @@ require_once("../../../config.php");
 		
 		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_shikter");
 		
-		$stmt = $mysql->prepare("SELECT id from users WHERE username=? and password=?");
+		$stmt = $mysql->prepare("SELECT id, First_Name, Last_Name from users WHERE username=? and password=?");
 		
 		echo $mysql->error;
 		
 		$stmt->bind_param("ss", $user, $pass);
 		
-		$stmt->bind_result($id);
+		$stmt->bind_result($id, $First_Name, $Last_Name);
 		
 		$stmt->execute();
 		
@@ -36,6 +36,8 @@ require_once("../../../config.php");
 			//create session variables
 			//redirect user
 			$_SESSION["user_id"] = $id;
+			$_SESSION["First_Name"] = $First_Name;
+			$_SESSION["Last_Name"] = $Last_Name;
 			$_SESSION["username"] = $user;
 			
 			header("Location: restrict.php");
@@ -53,7 +55,7 @@ require_once("../../../config.php");
 	
 	
 	
-	function signup($user, $pass){
+	function signup($user, $pass, $first_name, $last_name){
 		
 		//hash the password
 		$pass = hash("sha512", $pass);
@@ -62,11 +64,11 @@ require_once("../../../config.php");
 		//GLOBALS - access outside variable in function
 		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_shikter");
 		
-		$stmt = $mysql->prepare("INSERT INTO users(username, password) VALUES(?, ?)");
+		$stmt = $mysql->prepare("INSERT INTO users(username, password, First_name, Last_Name) VALUES(?, ?, ?, ?)");
 		
 		echo $mysql->error;
 		
-		$stmt->bind_param("ss", $user, $pass);
+		$stmt->bind_param("ssss", $user, $pass, $first_name, $last_name);
 		
 		if($stmt->execute()){
 			echo "user saved successfully!";
@@ -76,6 +78,23 @@ require_once("../../../config.php");
 	}
 	
 	
+	function saveInterest($interest){
+		
+		$mysql = new mysqli("localhost", $GLOBALS["db_username"], $GLOBALS["db_password"], "webpr2016_shikter");
+		
+		$stmt = $mysql->prepare("INSERT INTO interests (name) VALUES(?)");
+		
+		echo $mysql->error;
+		
+		$stmt->bind_param("s", $interest);
+		
+		if($stmt->execute()){
+			echo "Interest saved successfully!";
+		}else{
+			echo $stmt->error;
+		}
+		
+	}
 	
 	
 	/*
